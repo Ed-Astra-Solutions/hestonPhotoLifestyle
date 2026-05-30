@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2C2C2C">
+    <title>Page Not Found – Heston Photo Lifestyle</title>
+    <meta name="robots" content="noindex,follow">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C9A87C;
+            --gold-light: #E8D5B7;
+            --gold-dark: #8B7355;
+            --charcoal: #2C2C2C;
+            --white: #FFFFFF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        .container { max-width: 640px; }
+        .number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(7rem, 18vw, 13rem);
+            font-style: italic;
+            font-weight: 400;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            font-weight: 400;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+        h1 em { font-style: italic; color: var(--gold); }
+        p {
+            color: rgba(255,255,255,0.65);
+            font-size: 1rem;
+            line-height: 1.8;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 1rem 2.25rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-radius: 50px;
+            background: var(--gold);
+            color: var(--charcoal);
+            transition: all 0.3s ease;
+        }
+        .btn:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(201,168,124,0.35); }
+        .btn svg { width: 16px; height: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="number">404</div>
+        <h1>This page is <em>elsewhere</em></h1>
+        <p>The page you're after has been moved, renamed, or never existed. Let's get you back to somewhere beautiful.</p>
+        <a href="/" class="btn">
+            Back to Home
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+</body>
+</html>
