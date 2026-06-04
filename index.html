@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J09CVYG8EV"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-J09CVYG8EV');
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <!-- Google Analytics loaded conditionally by cookie-consent.js -->
+    <script src="/cookie-consent.js"></script>
     <meta name="theme-color" content="#2C2C2C">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1780,6 +1774,196 @@
                 }
             });
         }
+    </script>
+
+    <script>
+// =====================================================================
+// Live content overlay — fetches from admin API and updates sections
+// =====================================================================
+(async function applyLiveContent() {
+    const API = LIFESTYLE_API_BASE; // already defined above
+
+    let data;
+    try {
+        const res = await fetch(`${API}/lifestyle/content`);
+        const json = await res.json();
+        if (!json.success || !json.data) return;
+        data = json.data;
+    } catch { return; }
+
+    // --- Hero ---
+    if (data.hero) {
+        const h = data.hero;
+        const heroTag = document.querySelector('.hero-tag');
+        const heroTagline = document.querySelector('.hero-tagline');
+        const heroCtas = document.querySelectorAll('.hero-cta-row .btn');
+        if (heroTag && h.tag) heroTag.textContent = h.tag;
+        if (heroTagline && h.tagline) heroTagline.textContent = h.tagline;
+        if (h.headline) {
+            const heroH1 = document.querySelector('.hero-content h1');
+            if (heroH1) heroH1.innerHTML = h.headline;
+        }
+        if (heroCtas.length >= 1 && h.primaryCtaLabel) {
+            heroCtas[0].innerHTML = `${h.primaryCtaLabel} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+            if (h.primaryCtaHref) heroCtas[0].href = h.primaryCtaHref;
+        }
+        if (heroCtas.length >= 2 && h.secondaryCtaLabel) {
+            heroCtas[1].textContent = h.secondaryCtaLabel;
+            if (h.secondaryCtaHref) heroCtas[1].href = h.secondaryCtaHref;
+        }
+        // Background grid images
+        if (Array.isArray(h.backgroundImages) && h.backgroundImages.length) {
+            const gridImgs = document.querySelectorAll('.hero-grid img');
+            h.backgroundImages.slice(0, gridImgs.length).forEach((img, i) => {
+                if (img.imageUrl) {
+                    gridImgs[i].src = img.imageUrl;
+                    if (img.altText) gridImgs[i].alt = img.altText;
+                }
+            });
+        }
+    }
+
+    // --- About ---
+    if (data.about) {
+        const a = data.about;
+        const introLabel = document.querySelector('.intro-content .section-label');
+        const introTitle = document.querySelector('.intro-content .section-title');
+        const introPs = document.querySelectorAll('.intro-content p');
+        const introImg = document.querySelector('.intro-image img');
+        const badgeNumber = document.querySelector('.intro-image-badge .number');
+        const badgeLabel = document.querySelector('.intro-image-badge span');
+        const stats = document.querySelectorAll('.intro-stats .stat-item');
+
+        if (introLabel && a.sectionLabel) introLabel.textContent = a.sectionLabel;
+        if (introTitle && a.headline) introTitle.innerHTML = a.headline;
+        if (Array.isArray(a.paragraphs) && a.paragraphs.length) {
+            a.paragraphs.forEach((p, i) => { if (introPs[i]) introPs[i].innerHTML = p; });
+        }
+        if (introImg && a.coverImageUrl) introImg.src = a.coverImageUrl;
+        if (Array.isArray(a.stats) && a.stats.length) {
+            if (badgeNumber && a.stats[0]) badgeNumber.textContent = a.stats[0].number;
+            if (badgeLabel && a.stats[0]) badgeLabel.textContent = a.stats[0].label;
+            a.stats.forEach((s, i) => {
+                if (stats[i]) {
+                    const num = stats[i].querySelector('.stat-number');
+                    const lbl = stats[i].querySelector('.stat-label');
+                    if (num) num.textContent = s.number;
+                    if (lbl) lbl.textContent = s.label;
+                }
+            });
+        }
+    }
+
+    // --- Services grid ---
+    if (data.services && Array.isArray(data.services.entries) && data.services.entries.length) {
+        const grid = document.querySelector('.services-grid');
+        if (grid) {
+            const secLabel = document.querySelector('.services-section .section-label');
+            const secTitle = document.querySelector('.services-section .section-title');
+            const secSub = document.querySelector('.services-section .section-subtitle');
+            if (secLabel && data.services.sectionLabel) secLabel.textContent = data.services.sectionLabel;
+            if (secTitle && data.services.sectionTitle) secTitle.innerHTML = data.services.sectionTitle;
+            if (secSub && data.services.sectionSubtitle) secSub.textContent = data.services.sectionSubtitle;
+
+            grid.innerHTML = data.services.entries.map((s, i) => `
+                <a href="services/${s.slug}.html" class="service-card" data-aos="fade-up" data-aos-delay="${(i+1)*50}">
+                    <img src="${s.coverImageUrl || ''}" alt="${s.title}" class="service-card-img" loading="lazy">
+                    <div class="service-card-content">
+                        <span class="service-card-tag">${s.tag || ''}</span>
+                        <h3>${s.title}</h3>
+                        <p>${s.description || ''}</p>
+                        <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+                    </div>
+                </a>`).join('');
+        }
+    }
+
+    // --- Approach ---
+    if (data.approach) {
+        const ap = data.approach;
+        const approachLabel = document.querySelector('.approach-section .section-label');
+        const approachTitle = document.querySelector('.approach-section .section-title');
+        const approachSub = document.querySelector('.approach-section .section-subtitle');
+        if (approachLabel && ap.sectionLabel) approachLabel.textContent = ap.sectionLabel;
+        if (approachTitle && ap.sectionTitle) approachTitle.innerHTML = ap.sectionTitle;
+        if (approachSub && ap.sectionSubtitle) approachSub.textContent = ap.sectionSubtitle;
+
+        if (Array.isArray(ap.cards) && ap.cards.length) {
+            const grid = document.querySelector('.approach-grid');
+            if (grid) {
+                // Icons rotate through 4 pre-defined SVGs
+                const icons = [
+                    `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg>`,
+                    `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+                    `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9z"/></svg>`,
+                    `<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
+                ];
+                grid.innerHTML = ap.cards.map((c, i) => `
+                    <div class="approach-card" data-aos="fade-up" data-aos-delay="${(i+1)*50}">
+                        <div class="icon">${icons[i % icons.length]}</div>
+                        <h3>${c.title}</h3>
+                        <p>${c.description}</p>
+                    </div>`).join('');
+            }
+        }
+    }
+
+    // --- Portfolio mosaic ---
+    if (data.portfolio && Array.isArray(data.portfolio.entries) && data.portfolio.entries.length) {
+        const mosaic = document.querySelector('.portfolio-mosaic');
+        if (mosaic) {
+            const secLabel = document.querySelector('.portfolio-section .section-label');
+            const secTitle = document.querySelector('.portfolio-section .section-title');
+            if (secLabel && data.portfolio.sectionLabel) secLabel.textContent = data.portfolio.sectionLabel;
+            if (secTitle && data.portfolio.sectionTitle) secTitle.innerHTML = data.portfolio.sectionTitle;
+
+            mosaic.innerHTML = data.portfolio.entries.map((p, i) => `
+                <div class="mosaic-item ${p.layoutClass || ''}" data-aos="fade-up" data-aos-delay="${(i+1)*50}">
+                    <img src="${p.imageUrl}" alt="${p.label || p.serviceSlug || ''}" loading="lazy">
+                    <span class="mosaic-label">${p.label || ''}</span>
+                </div>`).join('');
+        }
+    }
+
+    // --- Testimonials ---
+    if (data.testimonials && Array.isArray(data.testimonials.entries) && data.testimonials.entries.length) {
+        const grid = document.querySelector('.testimonials-grid');
+        if (grid) {
+            grid.innerHTML = data.testimonials.entries.map((t, i) => {
+                const stars = Array(t.rating || 5).fill(`<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`).join('');
+                return `
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="${(i+1)*50}">
+                    <div class="testimonial-stars">${stars}</div>
+                    <p class="quote">"${t.quote}"</p>
+                    <div class="testimonial-author">
+                        <span class="name">${t.name}</span>
+                        <span class="role">${t.role || ''}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+    }
+
+    // --- Contact details ---
+    // Scope to the contact section only — footer tel:/mailto: links contain
+    // <svg> icons that must not be wiped by textContent assignment.
+    if (data.contact) {
+        const c = data.contact;
+        const phoneLink = document.querySelector('.contact-item-content a[href^="tel:"]');
+        const emailLink = document.querySelector('.contact-item-content a[href^="mailto:"]');
+        const contactSpans = document.querySelectorAll('.contact-item-content span');
+
+        if (c.phone && phoneLink) { phoneLink.textContent = c.phone; phoneLink.href = `tel:${c.phone.replace(/[^\d+]/g, '')}`; }
+        if (c.email && emailLink) { emailLink.textContent = c.email; emailLink.href = `mailto:${c.email}`; }
+        // contactSpans = [studio, hours] in document order
+        if (c.addressLine && contactSpans[0]) contactSpans[0].textContent = c.addressLine;
+        if (c.hours && contactSpans[1]) contactSpans[1].textContent = c.hours;
+    }
+
+    // Re-arm AOS for the freshly-injected [data-aos] cards, otherwise they
+    // remain at opacity:0 (AOS.init already ran before this fetch resolved).
+    if (window.AOS && typeof AOS.refreshHard === 'function') AOS.refreshHard();
+})();
     </script>
 </body>
 </html>

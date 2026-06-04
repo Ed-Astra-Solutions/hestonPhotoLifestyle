@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Analytics loaded conditionally by cookie-consent.js -->
+    <script src="/cookie-consent.js"></script>
     <title>Sport Photography – Heston Photo Lifestyle | London Photographers</title>
     <meta name="description" content="Dynamic action coverage of fixtures, training, tournaments and team portraits. Professional sport photography in London by Heston Photo Lifestyle.">
     <link rel="canonical" href="https://lifestyle.hestonphoto.co.uk/services/sport.html">
@@ -226,6 +228,9 @@
                 <p class="footer-copyright">© 2026 Heston Photo Lifestyle. All rights reserved.</p>
                 <div class="footer-legal">
                     <a href="../index.html#contact">Contact</a>
+                    <a href="../terms.html">Terms of Use</a>
+                    <a href="../privacy.html">Privacy Policy</a>
+                    <a href="../cookies.html">Cookie Policy</a>
                 </div>
             </div>
         </div>
@@ -245,6 +250,138 @@
             toggle.classList.toggle('active');
             nav.classList.toggle('active');
         });
+    </script>
+
+    <script>
+(async function applyServiceContent() {
+    const host = window.location.hostname;
+    const API = (host === 'localhost' || host === '127.0.0.1')
+        ? 'http://localhost:3000/api'
+        : 'https://hestonadminapi.edastra.in/api';
+    const SLUG = 'sport';
+
+    let svc = null, pricing = [];
+    try {
+        const [cRes, pRes] = await Promise.all([
+            fetch(`${API}/lifestyle/content`),
+            fetch(`${API}/lifestyle/pricing`)
+        ]);
+        const cJson = await cRes.json();
+        const pJson = await pRes.json();
+        if (cJson.success && cJson.data?.services?.entries) {
+            svc = cJson.data.services.entries.find(s => s.slug === SLUG) || null;
+        }
+        if (pJson.success) pricing = (pJson.data || []).filter(p => p.serviceSlug === SLUG && p.isActive !== false);
+    } catch { return; }
+
+    if (svc) {
+        // Hero
+        if (svc.heroImageUrl) {
+            const bg = document.querySelector('.service-hero-bg');
+            if (bg) { bg.src = svc.heroImageUrl; bg.alt = svc.title; }
+        }
+        if (svc.heroLede) {
+            const lede = document.querySelector('.service-hero-lede');
+            if (lede) lede.textContent = svc.heroLede;
+        }
+        const h1 = document.querySelector('.service-hero-content h1');
+        if (h1 && svc.title) h1.textContent = svc.title;
+
+        // Intro
+        if (svc.introHeadline) {
+            const h2 = document.querySelector('.service-intro-text h2');
+            if (h2) h2.innerHTML = svc.introHeadline;
+        }
+        if (Array.isArray(svc.introParagraphs) && svc.introParagraphs.length) {
+            const introText = document.querySelector('.service-intro-text');
+            if (introText) {
+                const existing = introText.querySelectorAll('p');
+                svc.introParagraphs.forEach((p, i) => {
+                    if (existing[i]) existing[i].innerHTML = p;
+                });
+            }
+        }
+        if (Array.isArray(svc.includedBullets) && svc.includedBullets.length) {
+            const ul = document.querySelector('.service-bullets');
+            if (ul) {
+                ul.innerHTML = svc.includedBullets.map(b => `
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${b}</li>`
+                ).join('');
+            }
+        }
+
+        // CTA
+        if (svc.ctaHeadline) {
+            const ctaH2 = document.querySelector('.service-cta h2');
+            if (ctaH2) ctaH2.innerHTML = svc.ctaHeadline;
+        }
+        if (svc.ctaText) {
+            const ctaP = document.querySelector('.service-cta p');
+            if (ctaP) ctaP.textContent = svc.ctaText;
+        }
+
+        // Gallery
+        if (Array.isArray(svc.galleryImages) && svc.galleryImages.length) {
+            const galleryRow = document.querySelector('.gallery-grid');
+            if (galleryRow) {
+                galleryRow.innerHTML = svc.galleryImages.slice(0, 6).map(img => `
+                    <div class="gallery-item"><img src="${img.imageUrl}" alt="${img.altText || img.caption || svc.title}" loading="lazy"></div>`
+                ).join('');
+            }
+        }
+
+        // SEO
+        if (svc.seoTitle) document.title = svc.seoTitle;
+        if (svc.seoDescription) {
+            const meta = document.querySelector('meta[name="description"]');
+            if (meta) meta.content = svc.seoDescription;
+        }
+    }
+
+    // Pricing / Backdrop section
+    if (pricing.length) {
+        let section = document.querySelector('.backdrop-section');
+        if (!section) {
+            // Service pages without pricing section — inject one before .service-gallery
+            const gallery = document.querySelector('.service-gallery');
+            if (gallery) {
+                section = document.createElement('section');
+                section.className = 'backdrop-section';
+                gallery.parentNode.insertBefore(section, gallery);
+            }
+        }
+        if (section) {
+            section.innerHTML = `
+                <div class="backdrop-container">
+                    <div class="backdrop-header">
+                        <span class="section-label">Pricing</span>
+                        <h2>Choose Your <em>Package</em></h2>
+                    </div>
+                    <div class="backdrop-packages">
+                        ${pricing.map(p => `
+                        <div class="backdrop-card${p.featured ? ' featured' : ''}">
+                            <div class="backdrop-card-top">
+                                ${p.tier ? `<span class="backdrop-tag">${p.tier}</span>` : ''}
+                                <h3>${p.title}</h3>
+                                ${p.description ? `<p class="backdrop-subtitle">${p.description}</p>` : ''}
+                                <div class="backdrop-price">£${p.price}${p.unit ? `<span style="font-size:14px;font-weight:400;margin-left:4px;">${p.unit}</span>` : ''}</div>
+                            </div>
+                            <div class="backdrop-card-body">
+                                ${p.features?.length ? `
+                                <p class="backdrop-includes-label">Includes</p>
+                                <ul class="backdrop-includes">
+                                    ${p.features.map(f => `<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`).join('')}
+                                </ul>` : ''}
+                                <a href="../index.html#contact" class="btn btn-gold">Book This Package
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>`).join('')}
+                    </div>
+                </div>`;
+        }
+    }
+})();
     </script>
 </body>
 </html>
