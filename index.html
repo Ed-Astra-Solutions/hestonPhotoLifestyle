@@ -1183,7 +1183,7 @@
             <div class="section-header" data-aos="fade-up">
                 <span class="section-label">What We Do</span>
                 <h2 class="section-title">Our <em>Specialisms</em></h2>
-                <p class="section-subtitle">Eight focused photography services, each delivered by a specialist within our team. Click any service for details and recent work.</p>
+                <p class="section-subtitle">Six focused photography services, each delivered by a specialist within our team. Click any service for details and recent work.</p>
             </div>
             <div class="services-grid">
                 <a href="services/headshots.html" class="service-card" data-aos="fade-up" data-aos-delay="50">
@@ -1236,30 +1236,10 @@
                     </div>
                 </a>
 
-                <a href="services/product.html" class="service-card" data-aos="fade-up" data-aos-delay="300">
-                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=900&fit=crop" alt="Product Photography" class="service-card-img" loading="lazy">
-                    <div class="service-card-content">
-                        <span class="service-card-tag">06 · E-Commerce</span>
-                        <h3>Product Photography</h3>
-                        <p>Studio-grade product imagery for e-commerce, lookbooks, packaging and PR. White background, lifestyle and creative still life.</p>
-                        <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-                    </div>
-                </a>
-
-                <a href="services/food.html" class="service-card" data-aos="fade-up" data-aos-delay="350">
-                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=900&fit=crop" alt="Food Photography" class="service-card-img" loading="lazy">
-                    <div class="service-card-content">
-                        <span class="service-card-tag">07 · Hospitality</span>
-                        <h3>Food Photography</h3>
-                        <p>Editorial food and drink imagery for restaurants, hotels, cookbooks, menus and brand campaigns. Stylist available on request.</p>
-                        <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
-                    </div>
-                </a>
-
-                <a href="services/property.html" class="service-card" data-aos="fade-up" data-aos-delay="400">
+                <a href="services/property.html" class="service-card" data-aos="fade-up" data-aos-delay="300">
                     <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=900&fit=crop" alt="Property Photography" class="service-card-img" loading="lazy">
                     <div class="service-card-content">
-                        <span class="service-card-tag">08 · Real Estate</span>
+                        <span class="service-card-tag">06 · Real Estate</span>
                         <h3>Property Photography</h3>
                         <p>Architectural and interiors imagery for estate agents, developers, hotels and short-let hosts. Drone &amp; twilight available.</p>
                         <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
@@ -1679,6 +1659,45 @@
         if (document.readyState === 'complete') initAOS();
         else window.addEventListener('load', initAOS);
 
+        // Warm the browser cache with each service page's hero banner while the
+        // visitor is still on the home page. By the time they click through, the
+        // hero is already downloaded so it appears instantly (in-site navigation).
+        // Direct hits load their hero eagerly from the static <img src> as usual.
+        //
+        // window.prefetchHeroImage(url) injects a low-priority <link rel=prefetch>
+        // once per URL, on browser idle. The content fetch below calls it again
+        // with admin-set heroImageUrls so those get warmed too (and override the
+        // static fallbacks the service page would otherwise use).
+        (function preloadServiceHeroes() {
+            const seen = new Set();
+            const idle = window.requestIdleCallback || (cb => setTimeout(cb, 1));
+            window.prefetchHeroImage = (url) => {
+                if (!url || seen.has(url)) return;
+                seen.add(url);
+                idle(() => {
+                    const link = document.createElement('link');
+                    link.rel = 'prefetch';
+                    link.as = 'image';
+                    link.href = url;
+                    document.head.appendChild(link);
+                });
+            };
+            // Static fallbacks — match the <img src> on each services/*.html page.
+            const STATIC_HEROES = [
+                'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1800', // headshots
+                'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1800', // family
+                'https://images.unsplash.com/photo-1530023367847-a683933f4172?w=1800', // sport
+                'https://images.unsplash.com/photo-1564644014708-0e2bc4e8d3f8?w=1800', // schools
+                'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1800', // events
+                'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1800',    // product
+                'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800', // food
+                'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1800'     // property
+            ];
+            const warm = () => STATIC_HEROES.forEach(window.prefetchHeroImage);
+            if (document.readyState === 'complete') warm();
+            else window.addEventListener('load', warm);
+        })();
+
         // Header scroll effect - show on scroll past hero
         const header = document.getElementById('header');
         const hero = document.querySelector('.hero');
@@ -1865,6 +1884,11 @@
                         <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                 </a>`).join('');
+        }
+        // Warm the cache with admin-set hero banners so in-site navigation to
+        // each service page is instant (falls back to the static prefetch above).
+        if (window.prefetchHeroImage) {
+            data.services.entries.forEach(s => window.prefetchHeroImage(s.heroImageUrl));
         }
     }
 
