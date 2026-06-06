@@ -325,15 +325,7 @@
             z-index: 0;
         }
         .hero-grid {
-            position: absolute;
-            inset: 0;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 4px;
-            z-index: 1;
-            opacity: 0.18;
-            filter: grayscale(40%);
+            display: none; /* Hero uses a plain shaded background, no image mosaic */
         }
         .hero-grid img { width: 100%; height: 100%; object-fit: cover; }
         .hero-overlay {
@@ -562,9 +554,11 @@
         .services-section { background: var(--white); }
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.75rem;
         }
+        @media (max-width: 992px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .services-grid { grid-template-columns: 1fr; } }
         .service-card {
             position: relative;
             border-radius: 18px;
@@ -704,19 +698,23 @@
 
         /* Portfolio Mosaic */
         .portfolio-section { background: var(--cream); }
+        /* Masonry via CSS columns — each tile keeps its image's natural aspect ratio (no cropping) */
         .portfolio-mosaic {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: 220px;
-            gap: 1rem;
+            column-count: 4;
+            column-gap: 1rem;
         }
         .mosaic-item {
             position: relative;
             overflow: hidden;
             border-radius: 12px;
             cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+            break-inside: avoid;
+            -webkit-column-break-inside: avoid;
         }
-        .mosaic-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .mosaic-item img { width: 100%; height: auto; display: block; transition: transform 0.6s ease; }
         .mosaic-item:hover img { transform: scale(1.08); }
         .mosaic-item::after {
             content: '';
@@ -742,8 +740,6 @@
             z-index: 2;
         }
         .mosaic-item:hover .mosaic-label { opacity: 1; transform: translateY(0); }
-        .mosaic-tall { grid-row: span 2; }
-        .mosaic-wide { grid-column: span 2; }
 
         /* Testimonials */
         .testimonials-section {
@@ -1033,7 +1029,7 @@
             section { padding: 4.5rem 1.5rem; }
             .intro-grid { grid-template-columns: 1fr; gap: 3rem; }
             .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-            .portfolio-mosaic { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 200px; }
+            .portfolio-mosaic { column-count: 3; }
         }
         @media (max-width: 768px) {
             .mobile-menu-toggle { display: flex; }
@@ -1077,8 +1073,7 @@
             .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
             .footer-brand { grid-column: span 2; }
             .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
-            .portfolio-mosaic { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; }
-            .mosaic-wide { grid-column: span 2; }
+            .portfolio-mosaic { column-count: 2; }
             .intro-stats { grid-template-columns: 1fr 1fr; gap: 1rem; }
         }
         @media (max-width: 480px) {
@@ -1092,8 +1087,7 @@
             .contact-form-wrap { padding: 1.75rem; }
             .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
             .footer-brand { grid-column: auto; }
-            .portfolio-mosaic { grid-template-columns: 1fr; }
-            .mosaic-tall, .mosaic-wide { grid-row: auto; grid-column: auto; }
+            .portfolio-mosaic { column-count: 1; }
         }
     </style>
 </head>
@@ -1129,8 +1123,6 @@
                             <li><a href="services/sport.html">Sport</a></li>
                             <li><a href="services/schools.html">Schools</a></li>
                             <li><a href="services/events.html">Events</a></li>
-                            <li><a href="services/product.html">Product</a></li>
-                            <li><a href="services/food.html">Food</a></li>
                             <li><a href="services/property.html">Property</a></li>
                         </ul>
                     </li>
@@ -1170,7 +1162,7 @@
             <span class="hero-tag">Heston Photo · Lifestyle</span>
             <img src="logo.png" alt="Heston Photo" class="hero-logo-img">
             <h1>Corporate &amp; <em>Commercial</em><br>Photography</h1>
-            <p class="hero-tagline">A creative team of London-based photographers making your people, products and spaces look amazing — bespoke imagery, crafted to your brief.</p>
+            <p class="hero-tagline">A creative team of London-based photographers making your people, products and spaces look amazing, bespoke imagery, crafted to your brief.</p>
             <div class="hero-cta-row">
                 <a href="#contact" class="btn btn-primary">
                     Get a Free Quote
@@ -1191,7 +1183,7 @@
             <div class="section-header" data-aos="fade-up">
                 <span class="section-label">What We Do</span>
                 <h2 class="section-title">Our <em>Specialisms</em></h2>
-                <p class="section-subtitle">Eight focused photography services — each delivered by a specialist within our team. Click any service for details and recent work.</p>
+                <p class="section-subtitle">Eight focused photography services, each delivered by a specialist within our team. Click any service for details and recent work.</p>
             </div>
             <div class="services-grid">
                 <a href="services/headshots.html" class="service-card" data-aos="fade-up" data-aos-delay="50">
@@ -1219,7 +1211,7 @@
                     <div class="service-card-content">
                         <span class="service-card-tag">03 · Action</span>
                         <h3>Sport Photography</h3>
-                        <p>Dynamic action coverage of fixtures, training, tournaments and team portraits — for clubs, schools and athletes.</p>
+                        <p>Dynamic action coverage of fixtures, training, tournaments and team portraits, for clubs, schools and athletes.</p>
                         <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                 </a>
@@ -1229,7 +1221,7 @@
                     <div class="service-card-content">
                         <span class="service-card-tag">04 · Education</span>
                         <h3>Schools Photography</h3>
-                        <p>Class portraits, prospectus shoots, life-on-campus imagery and event coverage — for nurseries, primaries, secondaries and independents.</p>
+                        <p>Class portraits, prospectus shoots, life-on-campus imagery and event coverage, for nurseries, primaries, secondaries and independents.</p>
                         <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                 </a>
@@ -1239,7 +1231,7 @@
                     <div class="service-card-content">
                         <span class="service-card-tag">05 · Live</span>
                         <h3>Events</h3>
-                        <p>Conferences, launches, galas, parties and brand activations — capturing atmosphere, key moments and the people that matter.</p>
+                        <p>Conferences, launches, galas, parties and brand activations, capturing atmosphere, key moments and the people that matter.</p>
                         <span class="service-card-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                 </a>
@@ -1292,8 +1284,8 @@
                     <span class="section-label">About Us</span>
                     <h2 class="section-title">Your One-Stop <em>Studio</em></h2>
                     <p>We're a creative team of corporate and commercial photographers based in London. We work with brands, agencies, schools, families and businesses to deliver imagery that's polished, considered and unmistakably <strong>on-brief</strong>.</p>
-                    <p>With <strong>over 15 years of combined experience</strong>, affordable prices and excellent service, we are your one-stop solution for every commercial photography need — from headshots and food to property, products and live events.</p>
-                    <p>We make your people and products look amazing — creating bespoke images according to your brief and company strategy.</p>
+                    <p>With <strong>over 15 years of combined experience</strong>, affordable prices and excellent service, we are your one-stop solution for every commercial photography need, from headshots and food to property, products and live events.</p>
+                    <p>We make your people and products look amazing, creating bespoke images according to your brief and company strategy.</p>
                     <div class="intro-stats">
                         <div class="stat-item">
                             <div class="stat-number">15+</div>
@@ -1327,28 +1319,28 @@
                         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg>
                     </div>
                     <h3>The Brief</h3>
-                    <p>We start with a proper conversation. Your goals, your audience, your brand strategy — so the imagery does the work it's meant to.</p>
+                    <p>We start with a proper conversation. Your goals, your audience, your brand strategy, so the imagery does the work it's meant to.</p>
                 </div>
                 <div class="approach-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="icon">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
                     <h3>Calm on Set</h3>
-                    <p>Professional yet relaxed. Whether you're an executive in front of the lens for the first time, or a child wriggling between shots — we keep things easy.</p>
+                    <p>Professional yet relaxed. Whether you're an executive in front of the lens for the first time, or a child wriggling between shots, we keep things easy.</p>
                 </div>
                 <div class="approach-card" data-aos="fade-up" data-aos-delay="150">
                     <div class="icon">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                     </div>
                     <h3>Crafted Edit</h3>
-                    <p>Every frame is colour-corrected and finished by the same hands that shot it. Subtle, consistent, on-brand — never over-baked.</p>
+                    <p>Every frame is colour-corrected and finished by the same hands that shot it. Subtle, consistent, on-brand, never over-baked.</p>
                 </div>
                 <div class="approach-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="icon">
                         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     </div>
                     <h3>Fast Delivery</h3>
-                    <p>Edited galleries delivered through a private client portal — typically within 7–10 working days. Express turnaround on request.</p>
+                    <p>Edited galleries delivered through a private client portal, typically within 7–10 working days. Express turnaround on request.</p>
                 </div>
             </div>
         </div>
@@ -1360,7 +1352,7 @@
             <div class="section-header" data-aos="fade-up">
                 <span class="section-label">Selected Work</span>
                 <h2 class="section-title">Recent <em>Projects</em></h2>
-                <p class="section-subtitle">A curated mosaic across our specialisms — a glimpse of what we shoot, day to day.</p>
+                <p class="section-subtitle">A curated mosaic across our specialisms, a glimpse of what we shoot, day to day.</p>
             </div>
             <div class="portfolio-mosaic">
                 <div class="mosaic-item mosaic-tall" data-aos="fade-up" data-aos-delay="50">
@@ -1416,7 +1408,7 @@
                         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
-                    <p class="quote">"We can't thank Heston enough for the quality of the photos they took, their dedication and being amazing to work with. The album quality is exceptional — beautifully bound and printed."</p>
+                    <p class="quote">"We can't thank Heston enough for the quality of the photos they took, their dedication and being amazing to work with. The album quality is exceptional, beautifully bound and printed."</p>
                     <div class="testimonial-author">
                         <span class="name">Krina &amp; Nishul</span>
                         <span class="role">Wedding &amp; Pre-Shoot</span>
@@ -1431,7 +1423,7 @@
                         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
-                    <p class="quote">"Simply Incredible! I struggle to put into words how lucky we are to have chosen Heston. The pre-shoot images came out beautifully — sexy, glamorous and exactly what we hoped for."</p>
+                    <p class="quote">"Simply Incredible! I struggle to put into words how lucky we are to have chosen Heston. The pre-shoot images came out beautifully, sexy, glamorous and exactly what we hoped for."</p>
                     <div class="testimonial-author">
                         <span class="name">Roshni Vekaria</span>
                         <span class="role">Pre-Shoot</span>
@@ -1461,7 +1453,7 @@
                         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
-                    <p class="quote">"Heston was professional and didn't let photo-taking interfere with us enjoying the party! They captured the whole atmosphere — the energy, the smaller moments, everything."</p>
+                    <p class="quote">"Heston was professional and didn't let photo-taking interfere with us enjoying the party! They captured the whole atmosphere, the energy, the smaller moments, everything."</p>
                     <div class="testimonial-author">
                         <span class="name">Kiran Dhesi</span>
                         <span class="role">Birthday Event</span>
@@ -1492,12 +1484,12 @@
             <div class="section-header" data-aos="fade-up">
                 <span class="section-label">Get In Touch</span>
                 <h2 class="section-title">Request a <em>Quote</em></h2>
-                <p class="section-subtitle">Get in touch with our experienced team today for a non-obligation quote — we'll reply within 24 hours.</p>
+                <p class="section-subtitle">Get in touch with our experienced team today for a non-obligation quote, we'll reply within 24 hours.</p>
             </div>
             <div class="contact-grid">
                 <div class="contact-info" data-aos="fade-right">
                     <h3>Let's Talk</h3>
-                    <p>Tell us about your brief — the audience, the deliverables, the deadline. We'll send a fixed quote, sample work and available dates.</p>
+                    <p>Tell us about your brief, the audience, the deliverables, the deadline. We'll send a fixed quote, sample work and available dates.</p>
                     <div class="contact-details">
                         <div class="contact-item">
                             <div class="contact-item-icon">
@@ -1596,7 +1588,7 @@
                 <div class="footer-brand">
                     <h3>Heston<span>Photo</span></h3>
                     <span class="footer-sub">Lifestyle</span>
-                    <p>A creative team of corporate and commercial photographers based in London. Making your people, products and spaces look amazing — with affordable prices and excellent service.</p>
+                    <p>A creative team of corporate and commercial photographers based in London. Making your people, products and spaces look amazing, with affordable prices and excellent service.</p>
                     <div class="footer-contact-inline">
                         <a href="tel:+442084329898"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>020 8432 9898</a>
                         <a href="mailto:info@hestonphoto.co.uk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>info@hestonphoto.co.uk</a>
@@ -1622,8 +1614,6 @@
                         <li><a href="services/sport.html">Sport</a></li>
                         <li><a href="services/schools.html">Schools</a></li>
                         <li><a href="services/events.html">Events</a></li>
-                        <li><a href="services/product.html">Product</a></li>
-                        <li><a href="services/food.html">Food</a></li>
                         <li><a href="services/property.html">Property</a></li>
                     </ul>
                 </div>
@@ -1758,7 +1748,7 @@
                     });
                     const data = await res.json();
                     if (!res.ok || !data.success) throw new Error(data.error || data.message || 'Failed');
-                    btn.innerHTML = '✓ Sent — we\'ll be in touch';
+                    btn.innerHTML = '✓ Sent, we\'ll be in touch';
                     setTimeout(() => {
                         form.reset();
                         btn.innerHTML = original;
@@ -1766,7 +1756,7 @@
                     }, 3000);
                 } catch (err) {
                     console.error('Booking error', err);
-                    btn.innerHTML = '✗ Failed — please try again';
+                    btn.innerHTML = '✗ Failed, please try again';
                     setTimeout(() => {
                         btn.innerHTML = original;
                         btn.disabled = false;
@@ -1778,7 +1768,7 @@
 
     <script>
 // =====================================================================
-// Live content overlay — fetches from admin API and updates sections
+// Live content overlay, fetches from admin API and updates sections
 // =====================================================================
 (async function applyLiveContent() {
     const API = LIFESTYLE_API_BASE; // already defined above
@@ -1945,7 +1935,7 @@
     }
 
     // --- Contact details ---
-    // Scope to the contact section only — footer tel:/mailto: links contain
+    // Scope to the contact section only, footer tel:/mailto: links contain
     // <svg> icons that must not be wiped by textContent assignment.
     if (data.contact) {
         const c = data.contact;

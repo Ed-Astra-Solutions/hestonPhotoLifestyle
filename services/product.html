@@ -52,8 +52,6 @@
                             <li><a href="sport.html">Sport</a></li>
                             <li><a href="schools.html">Schools</a></li>
                             <li><a href="events.html">Events</a></li>
-                            <li><a href="product.html" class="active">Product</a></li>
-                            <li><a href="food.html">Food</a></li>
                             <li><a href="property.html">Property</a></li>
                         </ul>
                     </li>
@@ -93,7 +91,7 @@
             <div class="service-intro-text">
                 <span class="section-label">About this service</span>
                 <h2>Bespoke product photography in <em>London</em></h2>
-                <p>Whether you are launching a beauty range, refreshing your Shopify catalogue, or pitching to investors — your product imagery has to do the heavy lifting. We make products look exceptional, consistently, at scale.</p>
+                <p>Whether you are launching a beauty range, refreshing your Shopify catalogue, or pitching to investors, your product imagery has to do the heavy lifting. We make products look exceptional, consistently, at scale.</p>
                 <p>We shoot in-studio on pure white for e-commerce, in-context lifestyle for brand &amp; social, and creative still life for editorial &amp; campaign. Models, props and stylist available on request.</p>
                 <p>Repeatable lighting set-ups, batch processing and clear file-naming mean even hundreds of SKUs come back ready to upload.</p>
             </div>
@@ -104,7 +102,7 @@
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Lifestyle &amp; in-context brand imagery</li>
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Creative still life &amp; campaign work</li>
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Models &amp; stylist on request</li>
-                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Bulk SKU shoots — consistent finish</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Bulk SKU shoots, consistent finish</li>
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>360° &amp; group sets available</li>
                 </ul>
                 <a href="../index.html#contact" class="btn btn-gold">Get a Free Quote
@@ -138,7 +136,7 @@
         <div class="service-cta-inner">
             <span class="section-label">Ready to shoot?</span>
             <h2>Let's plan your <em>product photography</em> session.</h2>
-            <p>Tell us about your brief — we'll come back within 24 hours with availability and a tailored quote.</p>
+            <p>Tell us about your brief, we'll come back within 24 hours with availability and a tailored quote.</p>
             <a href="../index.html#contact" class="btn btn-gold-lg">Start an Enquiry
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -195,7 +193,7 @@
                 <div class="footer-brand">
                     <h3>Heston<span>Photo</span></h3>
                     <span class="footer-sub">Lifestyle</span>
-                    <p>A creative team of corporate and commercial photographers based in London. Making your people, products and spaces look amazing — with affordable prices and excellent service.</p>
+                    <p>A creative team of corporate and commercial photographers based in London. Making your people, products and spaces look amazing, with affordable prices and excellent service.</p>
                     <div class="footer-contact-inline">
                         <a href="tel:+442084329898">020 8432 9898</a>
                         <a href="mailto:info.hestonphoto@gmail.com">info.hestonphoto@gmail.com</a>
@@ -209,8 +207,6 @@
                         <li><a href="sport.html">Sport</a></li>
                         <li><a href="schools.html">Schools</a></li>
                         <li><a href="events.html">Events</a></li>
-                        <li><a href="product.html">Product</a></li>
-                        <li><a href="food.html">Food</a></li>
                         <li><a href="property.html">Property</a></li>
                     </ul>
                 </div>
@@ -336,13 +332,39 @@
             const meta = document.querySelector('meta[name="description"]');
             if (meta) meta.content = svc.seoDescription;
         }
+
+        // Download Your Gallery
+        if (Array.isArray(svc.downloadGallery) && svc.downloadGallery.length) {
+            const cta = document.querySelector('.service-cta');
+            if (cta) {
+                const dl = document.createElement('section');
+                dl.className = 'download-gallery-section';
+                dl.innerHTML = `
+                    <div class="section-container">
+                        <div class="section-header">
+                            <span class="section-label">Your Gallery</span>
+                            <h2>Download Your <em>Gallery</em></h2>
+                        </div>
+                        <div class="download-grid">
+                            ${svc.downloadGallery.map(it => `
+                            <a class="download-card" href="${it.downloadUrl || '#'}" target="_blank" rel="noopener">
+                                <div class="download-card-img"><img src="${it.imageUrl || ''}" alt="${(it.title || 'Download').replace(/"/g,'&quot;')}" loading="lazy"></div>
+                                <div class="download-card-title"><span>${it.title || ''}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+                            </a>`).join('')}
+                        </div>
+                    </div>`;
+                cta.parentNode.insertBefore(dl, cta);
+            }
+        }
     }
 
     // Pricing / Backdrop section
-    if (pricing.length) {
+    const _staticBd = document.querySelector('.backdrop-section');
+    if (_staticBd && svc && svc.showPricing === false) _staticBd.remove();
+    if (pricing.length && svc && svc.showPricing !== false) {
         let section = document.querySelector('.backdrop-section');
         if (!section) {
-            // Service pages without pricing section — inject one before .service-gallery
+            // Service pages without pricing section, inject one before .service-gallery
             const gallery = document.querySelector('.service-gallery');
             if (gallery) {
                 section = document.createElement('section');

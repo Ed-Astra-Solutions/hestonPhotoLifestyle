@@ -236,6 +236,36 @@ nav .submenu a:hover { color: var(--gold-dark); background: rgba(201,168,124,0.1
 .gallery-item.tall { grid-row: span 2; }
 .gallery-item.wide { grid-column: span 2; }
 
+/* === Download Your Gallery === */
+.download-gallery-section { padding: 5rem 2rem; background: var(--bg-deep); }
+.download-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+}
+.download-card {
+    display: block; text-decoration: none; color: inherit;
+    background: var(--bg-soft); border: 1px solid rgba(201,168,124,0.18);
+    border-radius: 8px; overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.download-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    border-color: var(--gold);
+}
+.download-card-img { aspect-ratio: 4 / 3; overflow: hidden; background: var(--bg-deep); }
+.download-card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s ease;
+}
+.download-card:hover .download-card-img img { transform: scale(1.05); }
+.download-card-title {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    padding: 1rem 1.25rem; font-weight: 600; font-size: 1.05rem;
+}
+.download-card-title span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.download-card-title svg { width: 20px; height: 20px; color: var(--gold); flex-shrink: 0; }
+
 /* === CTA Banner === */
 .service-cta {
     padding: 6rem 2rem; text-align: center;
