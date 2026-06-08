@@ -489,32 +489,6 @@
             background: linear-gradient(135deg, transparent 60%, rgba(201,168,124,0.18));
             pointer-events: none;
         }
-        .intro-image-badge {
-            position: absolute;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            background: var(--white);
-            padding: 1.25rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.18);
-            text-align: center;
-            z-index: 2;
-        }
-        .intro-image-badge .number {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2.5rem;
-            font-weight: 500;
-            font-style: italic;
-            color: var(--gold-dark);
-            line-height: 1;
-        }
-        .intro-image-badge span {
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--text-light);
-        }
         .intro-content .section-label,
         .intro-content .section-title { text-align: left; }
         .intro-content .section-title { margin-top: 0.75rem; }
@@ -1323,10 +1297,6 @@
             <div class="intro-grid">
                 <div class="intro-image" data-aos="fade-right">
                     <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=900&h=1100&fit=crop" alt="Heston Photo Lifestyle studio team" loading="lazy">
-                    <div class="intro-image-badge">
-                        <div class="number">15+</div>
-                        <span>Years Experience</span>
-                    </div>
                 </div>
                 <div class="intro-content" data-aos="fade-left">
                     <span class="section-label">About Us</span>
@@ -1912,8 +1882,6 @@
         const introTitle = document.querySelector('.intro-content .section-title');
         const introPs = document.querySelectorAll('.intro-content p');
         const introImg = document.querySelector('.intro-image img');
-        const badgeNumber = document.querySelector('.intro-image-badge .number');
-        const badgeLabel = document.querySelector('.intro-image-badge span');
         const stats = document.querySelectorAll('.intro-stats .stat-item');
 
         if (introLabel && a.sectionLabel) introLabel.textContent = a.sectionLabel;
@@ -1923,8 +1891,6 @@
         }
         if (introImg && a.coverImageUrl) introImg.src = a.coverImageUrl;
         if (Array.isArray(a.stats) && a.stats.length) {
-            if (badgeNumber && a.stats[0]) badgeNumber.textContent = a.stats[0].number;
-            if (badgeLabel && a.stats[0]) badgeLabel.textContent = a.stats[0].label;
             a.stats.forEach((s, i) => {
                 if (stats[i]) {
                     const num = stats[i].querySelector('.stat-number');
