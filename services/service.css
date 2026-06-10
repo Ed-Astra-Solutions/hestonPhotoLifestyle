@@ -451,7 +451,7 @@ footer { background: var(--bg-soft); padding: 4rem 2rem 2rem; border-top: 1px so
 .backdrop-header h2 em { color: var(--gold); font-style: italic; }
 .backdrop-packages { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; }
 .backdrop-card {
-    width: 100%; max-width: 520px;
+    flex: 1 1 320px; max-width: 520px;
     border: 1px solid var(--gold);
     border-radius: 8px; overflow: hidden;
     background: #fff;
@@ -531,6 +531,7 @@ footer { background: var(--bg-soft); padding: 4rem 2rem 2rem; border-top: 1px so
     .service-gallery, .service-cta, .related-services { padding: 4rem 1.25rem; }
     .gallery-mosaic { column-count: 2; }
     .backdrop-packages { flex-direction: column; align-items: center; }
+    .backdrop-card { flex-basis: auto; width: 100%; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
     .footer-brand { grid-column: span 2; }
     .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
