@@ -102,6 +102,41 @@ Markup: [index.html:1408](index.html#L1408). Each = `testimonials.entries[]` (`l
 
 Endpoints: `POST/PUT/DELETE /api/admin/lifestyle/content/testimonials/entry[/:id]`.
 
+## A6b. Blog / Journal — shared `Blog` model, `site: 'lifestyle'`  ✅ (Admin: **Blog** tab under Lifestyle)
+Frontend: [blog.html](blog.html) (standalone list + single-post view, same UX as the wedding blog).
+
+Lifestyle blogs reuse the wedding **`Blog`** model (`backend/models/blog.js`) discriminated by a
+`site` field (`'wedding' | 'lifestyle'`, default `'wedding'`; legacy docs with no field read as
+wedding). The admin **Blog** tab under Lifestyle reuses the shared blog modal — it just tags new
+posts `site: 'lifestyle'` and lists `GET /api/admin/blogs?site=lifestyle`.
+
+| Field | Type | Markup target |
+|---|---|---|
+| `title` | string | `.blog-card-body h3` / post `h1` |
+| `excerpt` | string | `.blog-card-body p` |
+| `coverImageUrl` / `coverImageS3Key` | string | `.blog-card-image img` |
+| `content` (+ `[[image:N]]` tokens) | string | `.blog-post-content` |
+| `inlineImages[]` | `{ marker, imageUrl, s3Key, caption, altText }` | in-article `<figure>` |
+| `category`, `author`, `tags[]` | string(s) | card meta / filters / tags |
+| `isPublished`, `publishedAt`, `sortOrder` | — | visibility / ordering |
+
+- **Admin (shared blog routes, site in query/body):** `GET /api/admin/blogs?site=lifestyle`, `POST /api/admin/blogs` (body `site:'lifestyle'`), `PUT/DELETE /api/admin/blogs/:id`.
+- **Public (lifestyle-scoped):** `GET /api/lifestyle/blogs`, `GET /api/lifestyle/blogs/:slug` → `lifestyleActions.getPublicBlogs` / `getPublicBlogBySlug` (re-sign cover + inline image URLs).
+
+## A6c. Customer Portal mosaic — `content.customerPortal`  ✅ (Admin: **Customer Portal** tab)
+Dedicated page: [portal.html](portal.html) (own header/footer, same theme). Linked from the **Customer Portal** nav CTA + footer across the site (was an external `clients.hestonphotographics.com` link). Renders a grid mosaic from `GET /api/lifestyle/content` → `customerPortal.entries`. Each tile = `lifestyleCustomerPortalSchema`:
+
+| Field | Type | Markup target |
+|---|---|---|
+| `title` | string (name shown on tile) | `.portal-overlay h3` |
+| `linkUrl` | string (opened in **new tab** on click) | tile `href` (`target="_blank"`) |
+| `imageUrl` / `s3Key` | string | `.portal-item img` |
+| `layoutClass` | `'' \| 'mosaic-tall' \| 'mosaic-wide'` | tile size in the grid |
+| `sortOrder`, `isActive` | number / bool | ordering / visibility |
+
+Section copy (`sectionLabel`, `sectionTitle`, `sectionSubtitle`) via `PUT .../content/customerPortal` drives the page hero.
+Endpoints: `POST/PUT/DELETE /api/admin/lifestyle/content/portal/entry[/:id]`.
+
 ## A7. Contact block — `content.contact`  ⚠️
 Markup: [index.html:1496](index.html#L1496) (`.contact-details`). The form itself posts to `/api/lifestyle/booking`.
 
@@ -180,6 +215,8 @@ seoDescription:  { type: String, default: '' },   // meta description + schema
 | Landing Approach | (needs new model) | ❌ |
 | Landing Portfolio | **Portfolio** tab | ✅ |
 | Landing Testimonials | **Testimonials** tab | ✅ |
+| Blog / Journal ([blog.html](blog.html)) | **Blog** tab (shared `Blog` model, `site:'lifestyle'`) | ✅ |
+| Customer Portal ([portal.html](portal.html)) | **Customer Portal** tab (`content.customerPortal`) | ✅ |
 | Landing Contact details | (needs) `PUT content/contact` | ⚠️ |
 | Booking submissions | **Bookings** tab | ✅ |
 | Service page hero/intro/bullets/CTA | (needs service-schema fields) | ❌ |
