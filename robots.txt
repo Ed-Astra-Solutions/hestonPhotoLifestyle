@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /404.html
 
-Sitemap: https://lifestyle.hestonphoto.com/sitemap.xml
+Sitemap: https://lifestyle.hestonphoto.co.uk/sitemap.xml
