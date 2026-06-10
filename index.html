@@ -241,6 +241,16 @@
         nav a:hover { color: var(--gold); }
         nav a:hover::after { width: 100%; }
 
+        /* "Services" dropdown label — slightly different (serif italic) font for emphasis */
+        nav .has-submenu > a {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            text-transform: none;
+        }
+
         /* Submenu (Services dropdown) */
         nav .has-submenu { position: relative; }
         nav .submenu {
