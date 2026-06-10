@@ -1645,17 +1645,16 @@
 
         // Header scroll effect - show on scroll past hero
         const header = document.getElementById('header');
-        const hero = document.querySelector('.hero');
         let hasScrolled = false;
+        const HEADER_SHOW_AT = 10; // px scrolled before the app bar appears
 
         function checkHeaderVisibility() {
-            const heroBottom = hero.offsetHeight;
             const scrollTop = window.scrollY;
-            
-            if (scrollTop > heroBottom && !hasScrolled) {
+
+            if (scrollTop > HEADER_SHOW_AT && !hasScrolled) {
                 header.classList.add('visible');
                 hasScrolled = true;
-            } else if (scrollTop <= heroBottom && hasScrolled) {
+            } else if (scrollTop <= HEADER_SHOW_AT && hasScrolled) {
                 header.classList.remove('visible');
                 hasScrolled = false;
             }
