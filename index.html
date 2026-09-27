@@ -6,6 +6,7 @@
 
     <!-- Google Analytics loaded conditionally by cookie-consent.js -->
     <script src="/cookie-consent.js"></script>
+    <script src="/recaptcha.js" defer></script>
     <meta name="theme-color" content="#2C2C2C">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1714,11 +1715,7 @@
                 };
 
                 try {
-                    const res = await fetch(`${LIFESTYLE_API_BASE}/lifestyle/booking`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    const res = await HestonCaptcha.post(`${LIFESTYLE_API_BASE}/lifestyle/booking`, payload, 'submit_booking');
                     const data = await res.json();
                     if (!res.ok || !data.success) throw new Error(data.error || data.message || 'Failed');
                     btn.innerHTML = '✓ Sent, we\'ll be in touch';
@@ -1751,11 +1748,8 @@
                 input.disabled = true;
 
                 try {
-                    const res = await fetch(`${LIFESTYLE_API_BASE}/subscribe`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: input.value.trim(), source: 'footer' })
-                    });
+                    const res = await HestonCaptcha.post(`${LIFESTYLE_API_BASE}/subscribe`,
+                        { email: input.value.trim(), source: 'footer' }, 'subscribe');
                     const data = await res.json();
                     if (!res.ok || !data.success) throw new Error(data.message || 'Failed');
                     newsletter.reset();

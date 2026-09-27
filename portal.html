@@ -6,6 +6,7 @@
 
     <!-- Google Analytics loaded conditionally by cookie-consent.js -->
     <script src="/cookie-consent.js"></script>
+    <script src="/recaptcha.js" defer></script>
     <meta name="theme-color" content="#2C2C2C">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -580,14 +581,16 @@
                 const email = input.value.trim();
                 if (!email) return;
                 try {
-                    await fetch(`${LIFESTYLE_API_BASE}/subscribe`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, source: 'lifestyle-portal' })
-                    });
-                } catch (_) {}
-                input.value = '';
-                input.placeholder = 'Thanks for subscribing!';
+                    const res = await HestonCaptcha.post(`${LIFESTYLE_API_BASE}/subscribe`,
+                        { email, source: 'lifestyle-portal' }, 'subscribe');
+                    const data = await res.json();
+                    if (!res.ok || !data.success) throw new Error(data.message || 'Failed');
+                    input.value = '';
+                    input.placeholder = 'Thanks for subscribing!';
+                } catch (err) {
+                    console.error('Subscribe error', err);
+                    input.placeholder = 'Could not subscribe, try again';
+                }
             });
         }
     </script>
