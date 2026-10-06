@@ -9,7 +9,7 @@ between the static markup, the backend content model, and the admin UI.
 - **Backend actions:** `backend/methods/lifestyleActions.js`
 - **Routes:** `backend/routes/lifestyle.js`
 - **Admin UI:** `frontend-admin/index.html` → `#lifestyleSection` (tabs: Services, Portfolio, Testimonials, Event Galleries, Bookings)
-- **Public API base:** `https://hestonadminapi.edastra.in/api` (localhost: `http://localhost:3000/api`)
+- **Public API base:** `https://hestonapi.edastra.in/api` (localhost: `http://localhost:3000/api`)
 
 > **Status legend:** ✅ wired (model + admin UI exist) · ⚠️ model exists, no admin UI · ❌ not modelled yet (static-only, needs schema + UI).
 
